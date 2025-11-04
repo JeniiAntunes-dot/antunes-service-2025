@@ -1,0 +1,66 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  phone        String?
+  isProvider   Boolean  @default(false)
+  verified     Boolean  @default(true)
+  services     Service[]
+  reviews      Review[]
+  sentChats    Chat[]   @relation("UserSentChats")
+  receivedChats Chat[] @relation("UserReceivedChats")
+  notifications Notification[]
+}
+
+model Service {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  price        Float
+  category     String
+  availability String
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviews      Review[]
+  images       String[] @default([])
+  bannerUrl    String?
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  content   String
+  rating    Int      @default(0) @db.SmallInt
+  serviceId String
+  userId    String
+  photoUrl  String?
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id        String   @id @default(uuid())
+  message   String
+  timestamp DateTime @default(now())
+  senderId  String
+  receiverId String
+  sender    User     @relation("UserSentChats", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver  User     @relation("UserReceivedChats", fields: [receiverId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  message   String
+  read      Boolean  @default(false)
+  timestamp DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
