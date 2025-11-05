@@ -31,11 +31,11 @@ if (isClient()) {
   });
 
   // Recupera a sessão do localStorage ao inicializar
-  const storedToken = localStorage.getItem('supabase.auth.token');
-  if (storedToken) {
-    supabase.auth.setSession({ access_token: storedToken, refresh_token: undefined }).catch((error) => {
-      console.error('Erro ao restaurar sessão:', error);
-    });
+ // const storedToken = localStorage.getItem('supabase.auth.token');
+  //if (storedToken) {
+    //supabase.auth.setSession({ access_token: storedToken, refresh_token: undefined }).catch((error) => {
+     // console.error('Erro ao restaurar sessão:', error);
+  //  });
   }
 }
 
